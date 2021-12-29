@@ -12,24 +12,17 @@ exports.createOrder = async (req, res) => {
   try {
     const decoded = await jwt.verify(token, "secret100");
     const user = await User.findOne({ email: decoded.email, role: "user" });
-    if (!user) {
-      res
-        .status(403)
-        .json({ message: "You are not authorised to access this endpoint!" });
-    }
 
     if (user) {
-      const data = await products.findOne({ _id: req.body.productId });
+      const product = await products.findOne({ _id: req.body.product });
 
-      const product = await products.findOne({ _id: req.body.productId });
-
-      const address = await addresses.findOne({ _id: req.body.addressId });
+      const address = await addresses.findOne({ _id: req.body.address });
 
       const order = new Order({
         user: user,
         product: product,
         address: address,
-        amount: data.price,
+        amount: product.price,
         quantity: req.body.quantity,
       });
 

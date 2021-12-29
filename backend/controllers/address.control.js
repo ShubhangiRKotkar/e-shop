@@ -40,3 +40,23 @@ exports.AddAdress = async (req, res) => {
       .json({ message: "Please Login first to access this endpoint!" });
   }
 };
+
+exports.findAddress = (req, res) => {
+  const token = req.headers.authorization;
+
+  try {
+    const decode = jwt.verify(token, "secret100");
+    const number = decode.phone_number;
+    Address.findOne({ contactNumber: number })
+      .then((data) => {
+        res.status(200).json({ result: data });
+      })
+      .catch((err) => {
+        res.status(404).json({ message: err });
+      });
+  } catch (err) {
+    res
+      .status(403)
+      .json({ message: "Please Login first to access this endpoint!" });
+  }
+};
